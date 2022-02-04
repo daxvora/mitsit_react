@@ -4,14 +4,12 @@ import TodoItem from "./TodoItem";
 
 type Props = {
   todoList: TodoItemType[];
-  filterType: FilterType;
   completeTodo: (todoItem: TodoItemType) => void;
   deleteTodo: (id: number) => void;
 };
 
 const TodoList = ({
   todoList,
-  filterType,
   completeTodo,
   deleteTodo,
 }: Props) => {
@@ -26,17 +24,9 @@ const TodoList = ({
 
   return (
     <div className="flex-1">
-      {todoList.reduce((p, c) => {
-        if (
-          filterType == FilterType.all ||
-          (filterType === FilterType.pending && !c.isDone) ||
-          (filterType == FilterType.completed && c.isDone)
-        ) {
-          return [...p, render(c)];
-        }
-
-        return p;
-      }, [])}
+      {todoList.map((c) => {
+        return render(c);
+      })}
     </div>
   );
 };

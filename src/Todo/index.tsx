@@ -37,12 +37,18 @@ export default class index extends Component<Props, State> {
   inputRef = createRef<HTMLInputElement>();
 
   async componentDidMount() {
-    this.loadData();
+    this.loadData(FilterType.all);
   }
 
-  loadData = async () => {
+  loadData = async (filterType : FilterType) => {
     try {
-      const res = await fetch("http://localhost:3000/todoList");
+      let url ="http://localhost:3000/todoList";
+      if(filterType === FilterType.completed){
+        url = `${url}?isDone=true`
+      }else if(filterType === FilterType.pending){
+        url = `${url}?isDone=false`
+      }
+      const res = await fetch(url);
       const json = await res.json();
       this.setState({
         todoList: json,
@@ -129,7 +135,9 @@ export default class index extends Component<Props, State> {
   };
 
   filterTodo = (filterType: FilterType) => {
+    this.loadData(filterType);
     this.setState({ filterType });
+
   };
 
   render() {
@@ -142,11 +150,10 @@ export default class index extends Component<Props, State> {
         <TodoForm onSubmit={this.onSubmit} ref={this.inputRef} />
         <TodoList
           todoList={todoList}
-          filterType={filterType}
           completeTodo={this.completeTodo}
           deleteTodo={this.deleteTodo}
         />
-        <TodoFilter filterTodo={this.filterTodo} />
+        <TodoFilter filterTodo={this.filterTodo} currentFilter={filterType} />
       </div>
     );
   }
